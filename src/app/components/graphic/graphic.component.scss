@@ -1,0 +1,36 @@
+@import '../../../assets/css/vars';
+
+mat-card-content {
+    padding: .7rem 0 0 0 ;
+}
+
+.abstract, .details {
+    display: grid;
+    padding: 1rem 0;
+    grid-gap: .5rem;
+    & > div {
+        display: grid;
+        grid-template-columns: min-content auto;
+        grid-gap: .5rem;
+        & mat-label {
+            align-self: center;
+        }
+    }
+}
+
+.ok {
+    color: $HC-success;
+}
+
+.alert {
+    color: $HC-warning;
+}
+
+.error {
+    color: $HC-danger;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+}
