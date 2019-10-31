@@ -13,11 +13,35 @@ import { DataService } from "src/app/services/data.service";
 import { from, of, zip } from "rxjs";
 import { Transportadoras } from "src/app/Interfaces/interfaces.class";
 import { groupBy, mergeMap, toArray, distinct } from "rxjs/operators";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import * as moment from "moment";
+import { MAT_DATE_FORMATS, DateAdapter, MAT_DATE_LOCALE } from "@angular/material";
+import { MomentDateAdapter } from "@angular/material-moment-adapter";
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: "LL"
+  },
+  display: {
+    dateInput: "DD/MM/YYYY",
+    monthYearLabel: "YYYY",
+    dateA11yLabel: "LL",
+    monthYearA11yLabel: "YYYY"
+  }
+};
 
 @Component({
   selector: "app-dash",
   templateUrl: "./dash.component.html",
   styleUrls: ["./dash.component.scss"],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE]
+    },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
+  ],
   animations: [
     trigger("entering", [
       transition("* <=> *", [
@@ -101,45 +125,89 @@ export class DashComponent implements OnInit {
   proveedor = "";
   lstTransportadoras = [];
   step = 0;
+  public formGroup: FormGroup;
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private formBuilder: FormBuilder
+  ) {}
 
   ngOnInit() {
-    this.isLoading = true;
-    this.dataService.getTransportadoras().subscribe((data: any) => {
-
-
-const transportadoras = Array.from(new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))).map(
-  x => {
-    return {
-      transportadoraID: x,
-      transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
-        .TRANSPORTADORA,
-      CANTIDAD: data["Value"]
-        .filter(q => q.ID_TRANSPORTADORA === x)
-        .map(w => w.CANTIDAD)
-        .reduce((a, b) => a + b, 0),
-      ENVIADAS: data["Value"]
-        .filter(q => q.ID_TRANSPORTADORA === x)
-        .map(w => w.ENVIADAS)[0],
-      ESTADOS: data["Value"]
-        .filter(e => e.ID_TRANSPORTADORA === x)
-        .map(r => {
-          return {
-            Color: r.COLOR_FONDO,
-            Estado: r.ESTADO,
-            Cantidad: r.CANTIDAD
-          };
-        })
-    };
+    this.buildForm();
+    
   }
-);
 
-      console.log(data['Value'].map(x => x.TRANSPORTADORA));
-      console.log(data);   
-      console.log(JSON.stringify(data));   
+  private buildForm() {
+    this.formGroup = this.formBuilder.group({
+      fechaInicioControl: [
+        {
+          value: moment().subtract(1, "months")
+        },
+        [Validators.required]
+      ],
+      fechaFinControl: [{ value: moment() }, [Validators.required]]
+    });
+  }
+
+  consultar() {
+
+    this.isLoading = true;
+    const fechaIni = moment(this.formGroup.get("fechaInicioControl").value)
+      .format("YYYYMMDD")
+      .toString();
+
+    const fechaFin = moment(this.formGroup.get("fechaFinControl").value)
+      .format("YYYYMMDD")
+      .toString();
+
+    const query = {
+      Tag: "GETTIPTRAN",
+      Parametros: "#"+fechaIni+"#"+fechaFin,
+      Separador: "#"
+    };
+
+    console.log("Consulta: ", query);
+    debugger;
+    this.dataService.getTransportadoras(query).subscribe((data: any) => {
+      this.lstTransportadoras = Array.from(
+        new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
+      ).map(x => {
+        return {
+          transportadoraID: x,
+          transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
+            .TRANSPORTADORA,
+          CANTIDAD: data["Value"]
+            .filter(q => q.ID_TRANSPORTADORA === x)
+            .map(w => w.CANTIDAD)
+            .reduce((a, b) => a + b, 0),
+          ENVIADAS: data["Value"]
+            .filter(q => q.ID_TRANSPORTADORA === x)
+            .map(w => w.ENVIADAS)[0],
+          ESTADOS: data["Value"]
+            .filter(e => e.ID_TRANSPORTADORA === x)
+            .map(r => {
+              return {
+                Color: r.COLOR_FONDO,
+                Estado: r.ESTADO,
+                Cantidad: r.CANTIDAD
+              };
+            })
+        };
+      });
+      
       this.isLoading = false;
     });
+
+    console.log(this.formGroup.value);
+    console.log(
+      moment(this.formGroup.get("fechaInicioControl").value).format(
+        "DD/MM/YYYY"
+      )
+    );
+
+    console.log(
+      moment(this.formGroup.get("fechaFinControl").value).format("DD/MM/YYYY")
+    );
   }
 
   event(e) {

@@ -39,6 +39,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashComponent } from './pages/dash/dash.component';
 import { GraphicComponent } from './components/graphic/graphic.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent, DashComponent, GraphicComponent],
@@ -47,6 +48,7 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
 
     // Material
     MatDatepickerModule,

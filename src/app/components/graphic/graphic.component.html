@@ -1,14 +1,14 @@
 <mat-card class="mat-elevation-z8">
-  <mat-card-title class="title">LYT <mat-icon>store</mat-icon> </mat-card-title>
+  <mat-card-title class="title">{{transportadora.transportadora}} <mat-icon>store</mat-icon> </mat-card-title>
   
   <mat-card-content>
     <mat-divider></mat-divider>
     <div class="details">
       <div>
-        <mat-label>Cantidad: </mat-label> <span>200</span>
+        <mat-label>Cantidad: </mat-label> <span>{{transportadora.CANTIDAD}}</span>
       </div>
       <div>
-        <mat-label>Enviadas: </mat-label><span>%</span>
+        <mat-label>Enviadas: </mat-label><span>{{transportadora.ENVIADAS}}</span>
       </div>
     </div>
     <mat-divider></mat-divider>
