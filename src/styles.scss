@@ -1,22 +1,48 @@
-
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
+@import './assets/css/vars';
 @import '~@angular/material/theming';
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
 @include mat-core();
+
+$sd-primary: (
+  1: $HC-primary,
+  contrast: (
+    1: $HC-white
+  )
+);
+$sd-secondary: (
+  1: $HC-dark-gray,
+  2: $HC-light-gray,
+  contrast: (
+    1: $HC-white,
+    2: $HC-gray
+  )
+);
+$sd-success: (
+  1: $HC-success,
+  contrast: (
+    1: $HC-white
+  )
+);
+$sd-warning: (
+  1: $HC-warning,
+  contrast: (
+    1: $HC-black
+  )
+);
+$sd-danger: (
+  1: $HC-danger,
+  contrast: (
+    1: $HC-white
+  )
+);
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$TIP-primary: mat-palette($mat-indigo);
-$TIP-accent: mat-palette($mat-pink, A200, A100, A400);
+$TIP-primary: mat-palette($sd-primary, 1);
+$TIP-accent: mat-palette($sd-success, 1);
 
 // The warn palette is optional (defaults to red).
-$TIP-warn: mat-palette($mat-red);
+$TIP-warn: mat-palette($sd-danger, 1);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $TIP-theme: mat-light-theme($TIP-primary, $TIP-accent, $TIP-warn);

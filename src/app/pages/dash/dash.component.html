@@ -1,5 +1,9 @@
 <div class="no-data-grid" *ngIf="isLoading" [@fade]>
-  <mat-spinner mode="indeterminate" [diameter]="60"></mat-spinner>
+  <mat-spinner
+    mode="indeterminate"
+    [diameter]="80"
+    strokeWidth="2"
+  ></mat-spinner>
 </div>
 <div class="the-wrapper" [@entering]="render">
   <mat-card
@@ -13,7 +17,7 @@
     <h1 [@entering]>
       <span>Proveedor:</span
       ><span [@child]="proveedor !== undefined">{{
-        proveedor[0]?.DESCRIPCION || "Proveedor no encontrado."
+        proveedor[0]?.DESCRIPCION || 'Proveedor no encontrado.'
       }}</span>
     </h1>
   </div>
@@ -26,8 +30,8 @@
           matInput
           [matDatepicker]="dp1"
           placeholder="Fecha Inicial"
-          formControlName="fechaInicioControl"   
-          readonly       
+          formControlName="fechaInicioControl"
+          readonly
         />
         <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
         <mat-datepicker touchUi #dp1></mat-datepicker>
@@ -37,13 +41,18 @@
           matInput
           [matDatepicker]="dp2"
           placeholder="Fecha Final"
-          formControlName="fechaFinControl"     
-          readonly     
+          formControlName="fechaFinControl"
+          readonly
         />
         <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
         <mat-datepicker touchUi #dp2></mat-datepicker>
       </mat-form-field>
-      <button mat-raised-button color="primary" [disabled]="formGroup.invalid" (click)="consultar()">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="formGroup.invalid"
+        (click)="consultar()"
+      >
         <mat-icon>search</mat-icon>
         Consultar
       </button>
@@ -54,7 +63,7 @@
     <!-- Accordion -->
     <mat-accordion class="example-headers-align">
       <mat-expansion-panel [expanded]="step === 0" hideToggle disabled>
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header class="accordion-panel-header">
           <mat-panel-title>
             Transportadoras
           </mat-panel-title>
@@ -62,12 +71,16 @@
             <mat-icon>local_shipping</mat-icon>
           </mat-panel-description>
         </mat-expansion-panel-header>
-
-        <app-graphic *ngFor="let transportadora of lstTransportadoras" [transportadora]="transportadora"></app-graphic>
+        <div class="card-wrapper">
+          <app-graphic
+            *ngFor="let transportadora of lstTransportadoras"
+            [transportadora]="transportadora"
+          ></app-graphic>
+        </div>
       </mat-expansion-panel>
 
       <mat-expansion-panel [expanded]="step === 1" hideToggle disabled>
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header class="accordion-panel-header">
           <mat-panel-title>
             Detalle Transportadora
           </mat-panel-title>
@@ -82,7 +95,7 @@
       </mat-expansion-panel>
 
       <mat-expansion-panel [expanded]="step === 2" hideToggle disabled>
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header class="accordion-panel-header">
           <mat-panel-title>
             Datos TIP
           </mat-panel-title>

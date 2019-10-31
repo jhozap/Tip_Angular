@@ -12,6 +12,15 @@
 .the-wrapper {
   padding: 2rem;
   background: #efefef;
+  & div:first-of-type {
+    & span {
+      &:last-child {
+        margin-left: 10px;
+        font-weight: lighter;
+        color: lighten(black, 20);
+      }
+    }
+  }
   & mat-card {
     border-radius: 0;
     margin: 1rem 0;
@@ -63,16 +72,41 @@ mat-panel-description {
   justify-content: flex-end;
 }
 
-mat-expansion-panel-header {
-  background-color: $HC-primary;
-  &:hover {
-    cursor: pointer;
-    background-color: $HC-primary !important;
+.accordion {
+  &-panel {
+    &-header {
+      background-color: $HC-primary;
+      transition: all .2s ease-in-out;
+      box-shadow: 0 0 0 0;
+      &:hover {
+        cursor: pointer;
+      }
+      & mat-panel-title {
+        color: #fff !important;
+      }
+      & .mat-expansion-panel-header-description {
+        & mat-icon {
+          color: #fff !important;
+        }
+      }
+      &:focus, &:hover {
+        background: darken($HC-primary, 10) !important;
+        
+      }
+      &[aria-expanded="true"] {
+        border-radius: 5px 5px 0 0;
+        box-shadow: 0 6px 7px -4px rgba(0, 0, 0, .6);
+      }
+    }
   }
 }
 
-mat-panel-title {
-  color: #fff !important;
+.card-wrapper {
+  justify-content: center;
+  padding: 1rem 0 0 0;
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 @media screen and (max-width: 470px) {
