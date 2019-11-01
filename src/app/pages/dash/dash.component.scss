@@ -101,12 +101,17 @@ mat-panel-description {
   }
 }
 
-.card-wrapper {
+::ng-deep .mat-expansion-panel-body {
   justify-content: center;
-  padding: 1rem 0 0 0;
+  padding: 1.5rem !important;
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  justify-content: center;
+}
+.child-component {
+  display: flex;
+  width: 100%;
 }
 
 @media screen and (max-width: 470px) {

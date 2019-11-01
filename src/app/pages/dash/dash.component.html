@@ -71,12 +71,11 @@
             <mat-icon>local_shipping</mat-icon>
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <div class="card-wrapper">
           <app-graphic
             *ngFor="let transportadora of lstTransportadoras"
             [transportadora]="transportadora"
+            class="child-component"
           ></app-graphic>
-        </div>
       </mat-expansion-panel>
 
       <mat-expansion-panel [expanded]="step === 1" hideToggle disabled>

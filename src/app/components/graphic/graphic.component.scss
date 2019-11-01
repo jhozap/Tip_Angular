@@ -1,27 +1,46 @@
 @import '../../../assets/css/vars';
-
+mat-card {
+  width: 100% !important;
+  padding: 0 !important;
+}
 mat-card-content {
-    padding: .7rem 0 0 0 ;
-}
-
-.abstract, .details {
-    display: grid;
-    padding: 1rem 0;
-    grid-gap: .5rem;
-}
-
-.details {    
-    & > div {
-        display: grid;
-        grid-template-columns: min-content auto;
-        grid-gap: .5rem;
-        & mat-label {
-            align-self: center;
-        }
-    }
+  padding: 0.7rem 0 0 0;
 }
 
 .title {
-    display: flex;
-    justify-content: space-between;
+  padding: 1.5rem;
+  margin: 0;
+}
+
+.details {
+  padding: 1rem;
+}
+.abstract,
+.details {
+  display: grid;
+}
+
+.abstract {
+  & div {
+    position: relative;
+    cursor: pointer;
+  }
+}
+
+.details {
+  grid-gap: 1rem;
+  & > div {
+    display: grid;
+    grid-template-columns: min-content auto;
+    grid-gap: 0.5rem;
+
+    & mat-label {
+      align-self: center;
+    }
+  }
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
 }

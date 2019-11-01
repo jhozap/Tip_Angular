@@ -1,6 +1,27 @@
+@import '../../../assets/css/vars';
+
 .estados {
-    display: grid;
-    grid-template-columns: min-content 1fr;
-    grid-gap: .5rem;
-    align-items: center;
+    position: relative;
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-gap: 0.5rem;
+  align-items: center;
+  padding: .5rem 1.5rem;
+  color: lighten($HC-black, 15);
+  transition: all .2s ease-in-out;
+  &::after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 0;
+      right: 0;
+      background: $HC-primary;
+  }
+  &:hover {
+      font-weight: bold;
+      color: $HC-black;
+      &::after {
+          width: 3px;
+      }
+  }
 }
