@@ -13,18 +13,9 @@
     </div>
     <mat-divider></mat-divider>
     <div class="abstract">
-      <div >
-        <mat-icon class="ok">brightness_1</mat-icon>
-        <mat-label>Ok <span>(%)</span></mat-label>
-      </div>
-      <div>
-        <mat-icon class="alert">brightness_1</mat-icon>
-        <mat-label>Alerta <span>(%)</span></mat-label>
-      </div>
-      <div>
-        <mat-icon class="error">brightness_1</mat-icon>
-        <mat-label>Tarde <span>(%)</span></mat-label>
-      </div>
+      <div *ngFor="let estado of transportadora.ESTADOS">
+        <app-state [estado]="estado"></app-state>
+      </div>      
     </div>
     <button>prba</button>
   </mat-card-content>

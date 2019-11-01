@@ -8,6 +8,9 @@ mat-card-content {
     display: grid;
     padding: 1rem 0;
     grid-gap: .5rem;
+}
+
+.details {    
     & > div {
         display: grid;
         grid-template-columns: min-content auto;
@@ -16,18 +19,6 @@ mat-card-content {
             align-self: center;
         }
     }
-}
-
-.ok {
-    color: $HC-success;
-}
-
-.alert {
-    color: $HC-warning;
-}
-
-.error {
-    color: $HC-danger;
 }
 
 .title {

@@ -13,9 +13,13 @@ import { DataService } from "src/app/services/data.service";
 import { from, of, zip } from "rxjs";
 import { Transportadoras } from "src/app/Interfaces/interfaces.class";
 import { groupBy, mergeMap, toArray, distinct } from "rxjs/operators";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
 import * as moment from "moment";
-import { MAT_DATE_FORMATS, DateAdapter, MAT_DATE_LOCALE } from "@angular/material";
+import {
+  MAT_DATE_FORMATS,
+  DateAdapter,
+  MAT_DATE_LOCALE
+} from "@angular/material";
 import { MomentDateAdapter } from "@angular/material-moment-adapter";
 
 export const MY_FORMATS = {
@@ -119,38 +123,93 @@ export const MY_FORMATS = {
   ]
 })
 export class DashComponent implements OnInit {
-  render = true;
+  render = false;
   isLoading = false;
   errorMessage = "";
   proveedor = "";
-  lstTransportadoras = [];
+  lstTransportadoras = [
+    {
+      transportadoraID: 3,
+      transportadora: "ENVIA",
+      CANTIDAD: 3582,
+      ENVIADAS: 30,
+      ESTADOS: [
+        { Color: "#D8D98E", Estado: "Valido No Revisado", Cantidad: 796 },
+        { Color: "#777777", Estado: "No Revisado", Cantidad: 148 },
+        { Color: "#B6BD0A", Estado: "Valido Con Alerta", Cantidad: 54 },
+        { Color: "#085208", Estado: "Valido", Cantidad: 1319 },
+        { Color: "#000000", Estado: "Anulado", Cantidad: 1265 }
+      ]
+    },
+    {
+      transportadoraID: 2,
+      transportadora: "EGA KAT",
+      CANTIDAD: 2324,
+      ENVIADAS: 30,
+      ESTADOS: [
+        { Color: "#777777", Estado: "No Revisado", Cantidad: 1 },
+        { Color: "#B6BD0A", Estado: "Valido Con Alerta", Cantidad: 28 },
+        { Color: "#000000", Estado: "Anulado", Cantidad: 934 },
+        { Color: "#085208", Estado: "Valido", Cantidad: 962 },
+        { Color: "#D8D98E", Estado: "Valido No Revisado", Cantidad: 399 }
+      ]
+    },
+    {
+      transportadoraID: 1,
+      transportadora: "LYT",
+      CANTIDAD: 3813,
+      ENVIADAS: 30,
+      ESTADOS: [
+        { Color: "#085208", Estado: "Valido", Cantidad: 1421 },
+        { Color: "#D8D98E", Estado: "Valido No Revisado", Cantidad: 971 },
+        { Color: "#000000", Estado: "Anulado", Cantidad: 1361 },
+        { Color: "#B6BD0A", Estado: "Valido Con Alerta", Cantidad: 60 }
+      ]
+    }
+  ];
   step = 0;
   public formGroup: FormGroup;
 
   constructor(
     private dataService: DataService,
     private formBuilder: FormBuilder
-  ) {}
+  ) {
+    
+  }
 
   ngOnInit() {
     this.buildForm();
+    // this.formGroup.get("fechaInicioControl")
+    // .setValue(
+    //   moment()
+    //     .subtract(1, "year")
+    //     .format("DD/MM/YYYY")
+    // );
+
+    // this.formGroup
+    //   .get("fechaFinControl")
+    //   .setValue(moment().format("DD/MM/YYYY"));
     
   }
 
   private buildForm() {
     this.formGroup = this.formBuilder.group({
-      fechaInicioControl: [
+      fechaInicioControl: new FormControl([
         {
-          value: moment().subtract(1, "months")
+          value: moment()
+            .subtract(1, "year")
+            .format("DD/MM/YYYY")
         },
         [Validators.required]
-      ],
-      fechaFinControl: [{ value: moment() }, [Validators.required]]
+      ]),
+      fechaFinControl: new FormControl([
+        moment().format("DD/MM/YYYY"),
+        [Validators.required]
+      ])
     });
   }
 
   consultar() {
-
     this.isLoading = true;
     const fechaIni = moment(this.formGroup.get("fechaInicioControl").value)
       .format("YYYYMMDD")
@@ -162,52 +221,42 @@ export class DashComponent implements OnInit {
 
     const query = {
       Tag: "GETTIPTRAN",
-      Parametros: "#"+fechaIni+"#"+fechaFin,
+      Parametros: "#" + fechaIni + "#" + fechaFin,
       Separador: "#"
     };
 
     console.log("Consulta: ", query);
     debugger;
-    this.dataService.getTransportadoras(query).subscribe((data: any) => {
-      this.lstTransportadoras = Array.from(
-        new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
-      ).map(x => {
-        return {
-          transportadoraID: x,
-          transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
-            .TRANSPORTADORA,
-          CANTIDAD: data["Value"]
-            .filter(q => q.ID_TRANSPORTADORA === x)
-            .map(w => w.CANTIDAD)
-            .reduce((a, b) => a + b, 0),
-          ENVIADAS: data["Value"]
-            .filter(q => q.ID_TRANSPORTADORA === x)
-            .map(w => w.ENVIADAS)[0],
-          ESTADOS: data["Value"]
-            .filter(e => e.ID_TRANSPORTADORA === x)
-            .map(r => {
-              return {
-                Color: r.COLOR_FONDO,
-                Estado: r.ESTADO,
-                Cantidad: r.CANTIDAD
-              };
-            })
-        };
-      });
-      
-      this.isLoading = false;
-    });
-
-    console.log(this.formGroup.value);
-    console.log(
-      moment(this.formGroup.get("fechaInicioControl").value).format(
-        "DD/MM/YYYY"
-      )
-    );
-
-    console.log(
-      moment(this.formGroup.get("fechaFinControl").value).format("DD/MM/YYYY")
-    );
+    // this.dataService.getTransportadoras(query).subscribe((data: any) => {
+    //   this.lstTransportadoras = Array.from(
+    //     new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
+    //   ).map(x => {
+    //     return {
+    //       transportadoraID: x,
+    //       transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
+    //         .TRANSPORTADORA,
+    //       CANTIDAD: data["Value"]
+    //         .filter(q => q.ID_TRANSPORTADORA === x)
+    //         .map(w => w.CANTIDAD)
+    //         .reduce((a, b) => a + b, 0),
+    //       ENVIADAS: data["Value"]
+    //         .filter(q => q.ID_TRANSPORTADORA === x)
+    //         .map(w => w.ENVIADAS)[0],
+    //       ESTADOS: data["Value"]
+    //         .filter(e => e.ID_TRANSPORTADORA === x)
+    //         .map(r => {
+    //           return {
+    //             Color: r.COLOR_FONDO,
+    //             Estado: r.ESTADO,
+    //             Cantidad: r.CANTIDAD
+    //           };
+    //         })
+    //     };
+    //   });
+    // });
+    // console.log(JSON.stringify(this.lstTransportadoras));
+    this.render = true;
+    this.isLoading = false;
   }
 
   event(e) {

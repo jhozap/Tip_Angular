@@ -5,7 +5,7 @@
     strokeWidth="2"
   ></mat-spinner>
 </div>
-<div class="the-wrapper" [@entering]="render">
+<div class="the-wrapper">
   <mat-card
     class="no-privileges mat-elevation-z4"
     *ngIf="!render && errorMessage && !isLoading"
@@ -13,7 +13,7 @@
   >
     <h2>{{ errorMessage }}</h2>
   </mat-card>
-  <div *ngIf="render">
+  <div>
     <h1 [@entering]>
       <span>Proveedor:</span
       ><span [@child]="proveedor !== undefined">{{
@@ -22,7 +22,7 @@
     </h1>
   </div>
 
-  <mat-card class="mat-elevation-z4 first" *ngIf="render">
+  <mat-card class="mat-elevation-z4 first">
     <!-- Filtro -->
     <form [formGroup]="formGroup">
       <mat-form-field>

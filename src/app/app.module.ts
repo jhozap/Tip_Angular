@@ -40,9 +40,10 @@ import { DashComponent } from './pages/dash/dash.component';
 import { GraphicComponent } from './components/graphic/graphic.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { StateComponent } from './components/state/state.component';
 
 @NgModule({
-  declarations: [AppComponent, DashComponent, GraphicComponent],
+  declarations: [AppComponent, DashComponent, GraphicComponent, StateComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
