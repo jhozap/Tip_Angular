@@ -1,7 +1,7 @@
-<div>
+<div class="button">
     <button mat-raised-button color="primary">Consultar</button>
 </div>
-<table #table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<table #table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
   <!-- Checkbox Column -->
   <ng-container matColumnDef="select">
     <th mat-header-cell *matHeaderCellDef>
@@ -32,20 +32,20 @@
 
   <!-- # Notas Pedido Column -->
   <ng-container matColumnDef="CANTIDAD">
-    <th mat-header-cell *matHeaderCellDef># NP</th>
-    <td mat-cell *matCellDef="let element">{{ element.CANTIDAD }}</td>
+    <th mat-header-cell *matHeaderCellDef class="td-align"># NP</th>
+    <td mat-cell *matCellDef="let element" class="td-align">{{ element.CANTIDAD }}</td>
   </ng-container>
 
   <!-- % Notas Pedido Column -->
   <ng-container matColumnDef="PORCENT">
-    <th mat-header-cell *matHeaderCellDef>% NP</th>
-    <td mat-cell *matCellDef="let element">{{ element.PORCENT }}</td>
+    <th mat-header-cell *matHeaderCellDef class="td-align">% NP</th>
+    <td mat-cell *matCellDef="let element" class="td-align">{{ element.PORCENT }}</td>
   </ng-container>
 
     <!-- # Cartones Column -->
   <ng-container matColumnDef="CARTONES">
-    <th mat-header-cell *matHeaderCellDef># Cartones</th>
-    <td mat-cell *matCellDef="let element">{{ element.CARTONES }}</td>
+    <th mat-header-cell *matHeaderCellDef class="td-align"># Cartones</th>
+    <td mat-cell *matCellDef="let element" class="td-align">{{ element.CARTONES }}</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

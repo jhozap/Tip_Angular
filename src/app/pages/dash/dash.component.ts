@@ -200,136 +200,136 @@ export class DashComponent implements OnInit {
     };
  
     // Consulta de primera tab Transportadoras
-    this.dataService.getTransportadoras(query).subscribe((data: any) => {
+    // this.dataService.getTransportadoras(query).subscribe((data: any) => {
       
-      // Validacion de respuesta de la consulta
-      if (data["Estado"]) {
-        // Mapeo de estructura de datos
-        this.lstTransportadoras = Array.from(
-          new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
-        ).map(x => {
-          return {
-            transportadoraID: x,
-            transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
-              .TRANSPORTADORA,
-            CANTIDAD: data["Value"]
-              .filter(q => q.ID_TRANSPORTADORA === x)
-              .map(w => w.CANTIDAD)
-              .reduce((a, b) => a + b, 0),
-            ENVIADAS: data["Value"]
-              .filter(q => q.ID_TRANSPORTADORA === x)
-              .map(w => w.ENVIADAS)[0],
-            ESTADOS: data["Value"]
-              .filter(e => e.ID_TRANSPORTADORA === x)
-              .map(r => {
-                return {
-                  Color: r.COLOR_FONDO,
-                  IdEstado: r.ID_ESTADO,
-                  Estado: r.ESTADO,
-                  Cantidad: r.CANTIDAD
-                };
-              })
-          };
-        });
-        // console.log(JSON.stringify(this.lstTransportadoras));
-        // Activar primer tab
-        this.firstStep = true;
-        // Activar rendeo de contenido
-        this.renderContent = true;
-      } else {
-        // si la consulta principal no trae datos se rendea una carta de no contenido
-        this.renderNotFound = true;
-      }
-      // quitar pantalla de loading
-      this.isLoading = false;
-    });
+    //   // Validacion de respuesta de la consulta
+    //   if (data["Estado"]) {
+    //     // Mapeo de estructura de datos
+    //     this.lstTransportadoras = Array.from(
+    //       new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
+    //     ).map(x => {
+    //       return {
+    //         transportadoraID: x,
+    //         transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
+    //           .TRANSPORTADORA,
+    //         CANTIDAD: data["Value"]
+    //           .filter(q => q.ID_TRANSPORTADORA === x)
+    //           .map(w => w.CANTIDAD)
+    //           .reduce((a, b) => a + b, 0),
+    //         ENVIADAS: data["Value"]
+    //           .filter(q => q.ID_TRANSPORTADORA === x)
+    //           .map(w => w.ENVIADAS)[0],
+    //         ESTADOS: data["Value"]
+    //           .filter(e => e.ID_TRANSPORTADORA === x)
+    //           .map(r => {
+    //             return {
+    //               Color: r.COLOR_FONDO,
+    //               IdEstado: r.ID_ESTADO,
+    //               Estado: r.ESTADO,
+    //               Cantidad: r.CANTIDAD
+    //             };
+    //           })
+    //       };
+    //     });
+    //     // console.log(JSON.stringify(this.lstTransportadoras));
+    //     // Activar primer tab
+    //     this.firstStep = true;
+    //     // Activar rendeo de contenido
+    //     this.renderContent = true;
+    //   } else {
+    //     // si la consulta principal no trae datos se rendea una carta de no contenido
+    //     this.renderNotFound = true;
+    //   }
+    //   // quitar pantalla de loading
+    //   this.isLoading = false;
+    // });
 
     /* Mok de datos primera consulta */
-    // this.lstTransportadoras = [
-    //   {
-    //     transportadoraID: 2,
-    //     transportadora: "EGA KAT",
-    //     CANTIDAD: 2324,
-    //     ENVIADAS: 30,
-    //     ESTADOS: [
-    //       { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 934 },
-    //       { Color: "#777777", IdEstado: 1, Estado: "No Revisado", Cantidad: 1 },
-    //       {
-    //         Color: "#B6BD0A",
-    //         IdEstado: 6,
-    //         Estado: "Valido Con Alerta",
-    //         Cantidad: 28
-    //       },
-    //       {
-    //         Color: "#D8D98E",
-    //         IdEstado: 4,
-    //         Estado: "Valido No Revisado",
-    //         Cantidad: 399
-    //       },
-    //       { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 962 }
-    //     ]
-    //   },
-    //   {
-    //     transportadoraID: 3,
-    //     transportadora: "ENVIA",
-    //     CANTIDAD: 3582,
-    //     ENVIADAS: 30,
-    //     ESTADOS: [
-    //       {
-    //         Color: "#D8D98E",
-    //         IdEstado: 4,
-    //         Estado: "Valido No Revisado",
-    //         Cantidad: 796
-    //       },
-    //       { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 1265 },
-    //       {
-    //         Color: "#B6BD0A",
-    //         IdEstado: 6,
-    //         Estado: "Valido Con Alerta",
-    //         Cantidad: 54
-    //       },
-    //       {
-    //         Color: "#777777",
-    //         IdEstado: 1,
-    //         Estado: "No Revisado",
-    //         Cantidad: 148
-    //       },
-    //       { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 1319 }
-    //     ]
-    //   },
-    //   {
-    //     transportadoraID: 1,
-    //     transportadora: "LYT",
-    //     CANTIDAD: 3813,
-    //     ENVIADAS: 30,
-    //     ESTADOS: [
-    //       {
-    //         Color: "#D8D98E",
-    //         IdEstado: 4,
-    //         Estado: "Valido No Revisado",
-    //         Cantidad: 971
-    //       },
-    //       { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 1421 },
-    //       { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 1361 },
-    //       {
-    //         Color: "#B6BD0A",
-    //         IdEstado: 6,
-    //         Estado: "Valido Con Alerta",
-    //         Cantidad: 60
-    //       }
-    //     ]
-    //   }
-    // ];
-    // this.firstStep = true;
-    // this.renderContent = true;
-    // this.isLoading = false;
+    this.lstTransportadoras = [
+      {
+        transportadoraID: 2,
+        transportadora: "EGA KAT",
+        CANTIDAD: 2324,
+        ENVIADAS: 30,
+        ESTADOS: [
+          { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 934 },
+          { Color: "#777777", IdEstado: 1, Estado: "No Revisado", Cantidad: 1 },
+          {
+            Color: "#B6BD0A",
+            IdEstado: 6,
+            Estado: "Valido Con Alerta",
+            Cantidad: 28
+          },
+          {
+            Color: "#D8D98E",
+            IdEstado: 4,
+            Estado: "Valido No Revisado",
+            Cantidad: 399
+          },
+          { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 962 }
+        ]
+      },
+      {
+        transportadoraID: 3,
+        transportadora: "ENVIA",
+        CANTIDAD: 3582,
+        ENVIADAS: 30,
+        ESTADOS: [
+          {
+            Color: "#D8D98E",
+            IdEstado: 4,
+            Estado: "Valido No Revisado",
+            Cantidad: 796
+          },
+          { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 1265 },
+          {
+            Color: "#B6BD0A",
+            IdEstado: 6,
+            Estado: "Valido Con Alerta",
+            Cantidad: 54
+          },
+          {
+            Color: "#777777",
+            IdEstado: 1,
+            Estado: "No Revisado",
+            Cantidad: 148
+          },
+          { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 1319 }
+        ]
+      },
+      {
+        transportadoraID: 1,
+        transportadora: "LYT",
+        CANTIDAD: 3813,
+        ENVIADAS: 30,
+        ESTADOS: [
+          {
+            Color: "#D8D98E",
+            IdEstado: 4,
+            Estado: "Valido No Revisado",
+            Cantidad: 971
+          },
+          { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 1421 },
+          { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 1361 },
+          {
+            Color: "#B6BD0A",
+            IdEstado: 6,
+            Estado: "Valido Con Alerta",
+            Cantidad: 60
+          }
+        ]
+      }
+    ];
+    this.firstStep = true;
+    this.renderContent = true;
+    this.isLoading = false;
   }
 
   // consultar detalle Transportadora
   consultaDetalle() {
     this.bindingService.secondStep.subscribe(data => {
       console.log(data);
-      debugger;
+      // debugger;
       if (data) {
         this.isLoading = true;
         this.secondStep = false;
