@@ -14,7 +14,7 @@
     <mat-divider></mat-divider>
     <div class="abstract">
       <div *ngFor="let estado of transportadora.ESTADOS">
-        <app-state [estado]="estado"></app-state>
+        <app-state [estado]="estado" [transportadora]="transportadora.transportadora"></app-state>
       </div>      
     </div>
   </mat-card-content>

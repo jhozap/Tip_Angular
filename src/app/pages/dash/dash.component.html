@@ -1,9 +1,5 @@
 <div class="no-data-grid" *ngIf="isLoading" [@fade]>
-  <mat-spinner
-    mode="indeterminate"
-    [diameter]="80"
-    strokeWidth="2"
-  ></mat-spinner>
+  <app-loading></app-loading>
 </div>
 <div class="the-wrapper">
   <mat-card
@@ -59,10 +55,12 @@
     </form>
     <!-- Fin Filtro -->
   </mat-card>
-  <mat-card class="mat-elevation-z4" *ngIf="render">
+
+  <mat-card class="mat-elevation-z4" *ngIf="renderContent">
     <!-- Accordion -->
-    <mat-accordion class="example-headers-align">
-      <mat-expansion-panel [expanded]="step === 0" hideToggle disabled>
+    <mat-accordion class="example-headers-align" multi="true">
+      <!-- Primer Tab -->
+      <mat-expansion-panel [expanded]="firstStep" hideToggle disabled>
         <mat-expansion-panel-header class="accordion-panel-header">
           <mat-panel-title>
             Transportadoras
@@ -77,8 +75,8 @@
             class="child-component"
           ></app-graphic>
       </mat-expansion-panel>
-
-      <mat-expansion-panel [expanded]="step === 1" hideToggle disabled>
+      <!-- Segundo Tab -->
+      <mat-expansion-panel [expanded]="secondStep" hideToggle disabled>
         <mat-expansion-panel-header class="accordion-panel-header">
           <mat-panel-title>
             Detalle Transportadora
@@ -87,12 +85,14 @@
             <mat-icon>list</mat-icon>
           </mat-panel-description>
         </mat-expansion-panel-header>
-
-        <mat-form-field>
-          <input matInput placeholder="Country" />
-        </mat-form-field>
+        <div *ngIf="details?.length > 0">
+          <!-- Llamada a tabla de detalle de transportadora -->
+          <app-table-details [details]="details"></app-table-details>
+        </div>
+        
+       
       </mat-expansion-panel>
-
+      <!-- Tercer Tab -->
       <mat-expansion-panel [expanded]="step === 2" hideToggle disabled>
         <mat-expansion-panel-header class="accordion-panel-header">
           <mat-panel-title>
@@ -121,5 +121,9 @@
       </mat-expansion-panel>
     </mat-accordion>
     <!-- Fin Accordion -->
+  </mat-card>
+
+  <mat-card class="mat-elevation-z4" *ngIf="renderNotFound">
+    <p>No data Found</p>
   </mat-card>
 </div>

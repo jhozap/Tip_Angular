@@ -41,15 +41,30 @@ import { GraphicComponent } from './components/graphic/graphic.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { StateComponent } from './components/state/state.component';
+import { LoadingComponent } from './components/loading/loading.component';
+import { ToastrModule } from "ngx-toastr";
+import { TableDetailsComponent } from './components/table-details/table-details.component';
 
 @NgModule({
-  declarations: [AppComponent, DashComponent, GraphicComponent, StateComponent],
+  declarations: [
+    AppComponent,
+    DashComponent,
+    GraphicComponent,
+    StateComponent,
+    LoadingComponent,
+    TableDetailsComponent
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: "toast-bottom-right",
+      preventDuplicates: true
+    }),
 
     // Material
     MatDatepickerModule,

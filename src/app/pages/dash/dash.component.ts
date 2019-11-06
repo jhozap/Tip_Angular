@@ -21,6 +21,8 @@ import {
   MAT_DATE_LOCALE
 } from "@angular/material";
 import { MomentDateAdapter } from "@angular/material-moment-adapter";
+import { BindingService } from 'src/app/services/binding.service';
+import { ToastrService } from 'ngx-toastr';
 
 export const MY_FORMATS = {
   parse: {
@@ -124,74 +126,33 @@ export const MY_FORMATS = {
 })
 export class DashComponent implements OnInit {
   render = false;
+  renderNotFound = false;
+  renderContent = false;
   isLoading = false;
   errorMessage = "";
   proveedor = "";
-  lstTransportadoras = [
-    {
-      transportadoraID: 3,
-      transportadora: "ENVIA",
-      CANTIDAD: 3582,
-      ENVIADAS: 30,
-      ESTADOS: [
-        { Color: "#D8D98E", Estado: "Valido No Revisado", Cantidad: 796 },
-        { Color: "#777777", Estado: "No Revisado", Cantidad: 148 },
-        { Color: "#B6BD0A", Estado: "Valido Con Alerta", Cantidad: 54 },
-        { Color: "#085208", Estado: "Valido", Cantidad: 1319 },
-        { Color: "#000000", Estado: "Anulado", Cantidad: 1265 }
-      ]
-    },
-    {
-      transportadoraID: 2,
-      transportadora: "EGA KAT",
-      CANTIDAD: 2324,
-      ENVIADAS: 30,
-      ESTADOS: [
-        { Color: "#777777", Estado: "No Revisado", Cantidad: 1 },
-        { Color: "#B6BD0A", Estado: "Valido Con Alerta", Cantidad: 28 },
-        { Color: "#000000", Estado: "Anulado", Cantidad: 934 },
-        { Color: "#085208", Estado: "Valido", Cantidad: 962 },
-        { Color: "#D8D98E", Estado: "Valido No Revisado", Cantidad: 399 }
-      ]
-    },
-    {
-      transportadoraID: 1,
-      transportadora: "LYT",
-      CANTIDAD: 3813,
-      ENVIADAS: 30,
-      ESTADOS: [
-        { Color: "#085208", Estado: "Valido", Cantidad: 1421 },
-        { Color: "#D8D98E", Estado: "Valido No Revisado", Cantidad: 971 },
-        { Color: "#000000", Estado: "Anulado", Cantidad: 1361 },
-        { Color: "#B6BD0A", Estado: "Valido Con Alerta", Cantidad: 60 }
-      ]
-    }
-  ];
-  step = 0;
+  lstTransportadoras = [];
+  firstStep = false;
+  secondStep = false;
+  thirdStep = false;
+  fechaIni;
+  fechaFin;
+  details;
   public formGroup: FormGroup;
 
   constructor(
     private dataService: DataService,
+    private bindingService: BindingService,
+    private toastr: ToastrService,
     private formBuilder: FormBuilder
-  ) {
-    
-  }
+  ) {}
 
   ngOnInit() {
     this.buildForm();
-    // this.formGroup.get("fechaInicioControl")
-    // .setValue(
-    //   moment()
-    //     .subtract(1, "year")
-    //     .format("DD/MM/YYYY")
-    // );
-
-    // this.formGroup
-    //   .get("fechaFinControl")
-    //   .setValue(moment().format("DD/MM/YYYY"));
-    
+    this.consultaDetalle();
   }
 
+  // Construccion de formulario Reactivo para las fechas del filtro principal
   private buildForm() {
     this.formGroup = this.formBuilder.group({
       fechaInicioControl: new FormControl([
@@ -209,61 +170,191 @@ export class DashComponent implements OnInit {
     });
   }
 
+  // Consulta inicial de Transportadoras
   consultar() {
+    debugger;
+    // habilitar pantalla de loading
     this.isLoading = true;
-    const fechaIni = moment(this.formGroup.get("fechaInicioControl").value)
+    // no renderizar contenido
+    this.renderContent = false;
+    // no renderizar pantalla de no contenido
+    this.renderNotFound = false;
+    // resetear valores de transportadora y estado segunda consulta a null
+    this.bindingService.shipping.next(null);
+    this.bindingService.state.next(null);
+    // resetear pasos 2 y 3
+    this.bindingService.secondStep.next(false);  
+    // captura fecha inicial con moment
+    this.fechaIni = moment(this.formGroup.get("fechaInicioControl").value)
       .format("YYYYMMDD")
       .toString();
-
-    const fechaFin = moment(this.formGroup.get("fechaFinControl").value)
+    // captura feha final con moment
+    this.fechaFin = moment(this.formGroup.get("fechaFinControl").value)
       .format("YYYYMMDD")
       .toString();
-
+    // construccion de primera consulta
     const query = {
       Tag: "GETTIPTRAN",
-      Parametros: "#" + fechaIni + "#" + fechaFin,
+      Parametros: "#" + this.fechaIni + "#" + this.fechaFin,
       Separador: "#"
     };
+ 
+    // Consulta de primera tab Transportadoras
+    this.dataService.getTransportadoras(query).subscribe((data: any) => {
+      
+      // Validacion de respuesta de la consulta
+      if (data["Estado"]) {
+        // Mapeo de estructura de datos
+        this.lstTransportadoras = Array.from(
+          new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
+        ).map(x => {
+          return {
+            transportadoraID: x,
+            transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
+              .TRANSPORTADORA,
+            CANTIDAD: data["Value"]
+              .filter(q => q.ID_TRANSPORTADORA === x)
+              .map(w => w.CANTIDAD)
+              .reduce((a, b) => a + b, 0),
+            ENVIADAS: data["Value"]
+              .filter(q => q.ID_TRANSPORTADORA === x)
+              .map(w => w.ENVIADAS)[0],
+            ESTADOS: data["Value"]
+              .filter(e => e.ID_TRANSPORTADORA === x)
+              .map(r => {
+                return {
+                  Color: r.COLOR_FONDO,
+                  IdEstado: r.ID_ESTADO,
+                  Estado: r.ESTADO,
+                  Cantidad: r.CANTIDAD
+                };
+              })
+          };
+        });
+        // console.log(JSON.stringify(this.lstTransportadoras));
+        // Activar primer tab
+        this.firstStep = true;
+        // Activar rendeo de contenido
+        this.renderContent = true;
+      } else {
+        // si la consulta principal no trae datos se rendea una carta de no contenido
+        this.renderNotFound = true;
+      }
+      // quitar pantalla de loading
+      this.isLoading = false;
+    });
 
-    console.log("Consulta: ", query);
-    debugger;
-    // this.dataService.getTransportadoras(query).subscribe((data: any) => {
-    //   this.lstTransportadoras = Array.from(
-    //     new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
-    //   ).map(x => {
-    //     return {
-    //       transportadoraID: x,
-    //       transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
-    //         .TRANSPORTADORA,
-    //       CANTIDAD: data["Value"]
-    //         .filter(q => q.ID_TRANSPORTADORA === x)
-    //         .map(w => w.CANTIDAD)
-    //         .reduce((a, b) => a + b, 0),
-    //       ENVIADAS: data["Value"]
-    //         .filter(q => q.ID_TRANSPORTADORA === x)
-    //         .map(w => w.ENVIADAS)[0],
-    //       ESTADOS: data["Value"]
-    //         .filter(e => e.ID_TRANSPORTADORA === x)
-    //         .map(r => {
-    //           return {
-    //             Color: r.COLOR_FONDO,
-    //             Estado: r.ESTADO,
-    //             Cantidad: r.CANTIDAD
-    //           };
-    //         })
-    //     };
-    //   });
-    // });
-    // console.log(JSON.stringify(this.lstTransportadoras));
-    this.render = true;
-    this.isLoading = false;
+    /* Mok de datos primera consulta */
+    // this.lstTransportadoras = [
+    //   {
+    //     transportadoraID: 2,
+    //     transportadora: "EGA KAT",
+    //     CANTIDAD: 2324,
+    //     ENVIADAS: 30,
+    //     ESTADOS: [
+    //       { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 934 },
+    //       { Color: "#777777", IdEstado: 1, Estado: "No Revisado", Cantidad: 1 },
+    //       {
+    //         Color: "#B6BD0A",
+    //         IdEstado: 6,
+    //         Estado: "Valido Con Alerta",
+    //         Cantidad: 28
+    //       },
+    //       {
+    //         Color: "#D8D98E",
+    //         IdEstado: 4,
+    //         Estado: "Valido No Revisado",
+    //         Cantidad: 399
+    //       },
+    //       { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 962 }
+    //     ]
+    //   },
+    //   {
+    //     transportadoraID: 3,
+    //     transportadora: "ENVIA",
+    //     CANTIDAD: 3582,
+    //     ENVIADAS: 30,
+    //     ESTADOS: [
+    //       {
+    //         Color: "#D8D98E",
+    //         IdEstado: 4,
+    //         Estado: "Valido No Revisado",
+    //         Cantidad: 796
+    //       },
+    //       { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 1265 },
+    //       {
+    //         Color: "#B6BD0A",
+    //         IdEstado: 6,
+    //         Estado: "Valido Con Alerta",
+    //         Cantidad: 54
+    //       },
+    //       {
+    //         Color: "#777777",
+    //         IdEstado: 1,
+    //         Estado: "No Revisado",
+    //         Cantidad: 148
+    //       },
+    //       { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 1319 }
+    //     ]
+    //   },
+    //   {
+    //     transportadoraID: 1,
+    //     transportadora: "LYT",
+    //     CANTIDAD: 3813,
+    //     ENVIADAS: 30,
+    //     ESTADOS: [
+    //       {
+    //         Color: "#D8D98E",
+    //         IdEstado: 4,
+    //         Estado: "Valido No Revisado",
+    //         Cantidad: 971
+    //       },
+    //       { Color: "#085208", IdEstado: 5, Estado: "Valido", Cantidad: 1421 },
+    //       { Color: "#000000", IdEstado: 7, Estado: "Anulado", Cantidad: 1361 },
+    //       {
+    //         Color: "#B6BD0A",
+    //         IdEstado: 6,
+    //         Estado: "Valido Con Alerta",
+    //         Cantidad: 60
+    //       }
+    //     ]
+    //   }
+    // ];
+    // this.firstStep = true;
+    // this.renderContent = true;
+    // this.isLoading = false;
   }
 
-  event(e) {
-    console.log(e.value);
-  }
+  // consultar detalle Transportadora
+  consultaDetalle() {
+    this.bindingService.secondStep.subscribe(data => {
+      console.log(data);
+      debugger;
+      if (data) {
+        this.isLoading = true;
+        this.secondStep = false;
+        const query = {
+          Tag: "TIPDAEST",
+          Parametros:
+            "#" +
+            this.bindingService.shipping.value +
+            "#" +
+            this.bindingService.state.value,
+          Separador: "#"
+        };
 
-  prba(e) {
-    console.log(e);
+        this.dataService.getDetalleEstado(query).subscribe((data: any) => {
+          if (data["Estado"]) {
+            this.details = data["Value"];
+            this.secondStep = true;
+            this.isLoading = false;
+          } else {
+            this.toastr.info("La consulta no retorno datos");
+          }
+        });
+      }
+    });
+
+    //
   }
 }

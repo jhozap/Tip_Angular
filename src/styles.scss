@@ -1,6 +1,7 @@
 @import './assets/css/vars';
 @import '~@angular/material/theming';
 @include mat-core();
+@import '~ngx-toastr/toastr';
 
 $sd-primary: (
   1: $HC-primary,

@@ -7,13 +7,14 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class GraphicComponent implements OnInit {
 
+  // dato de entrada lista de transportadoras
   @Input()
   transportadora: any;
 
   constructor() { }
 
   ngOnInit() {
-    console.log(this.transportadora);
+    // console.log(this.transportadora);
   }
 
 }
