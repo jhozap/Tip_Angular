@@ -12,8 +12,10 @@ export class BindingService {
   secondStep = new BehaviorSubject<boolean>(false);
   thirdStep = new BehaviorSubject<boolean>(false);
   // Estado y Transportadora segundo tab Acordeon
-  state = new BehaviorSubject<any>(false);
-  shipping = new BehaviorSubject<any>(false);
+  state = new BehaviorSubject<any>(null);
+  shipping = new BehaviorSubject<any>(null);
+  // Estados seleccionados segundo Step
+  selectedStates = new BehaviorSubject<any>(null);
 
   constructor() {}
 }

@@ -11,3 +11,16 @@ export interface DetalleTransportadora {
   ESTADO_MONITOREO: number;
   PORCENT: number;
 }
+
+export interface DatosTIP {
+  ESTADO: string;
+  FECHA: string;
+  FECHA_CREA: string;
+  ID_OLA: string;
+  ID_RUTA: string;
+  NOTA_PEDIDO: string;
+  ORDER_ID: number;
+  SKU: string;
+  STICKER: string;
+  TRANSPORTADORA: string;
+}

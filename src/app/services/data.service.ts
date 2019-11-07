@@ -28,4 +28,12 @@ export class DataService {
       { headers: this.generateBasicHeaders() }
     );
   }
+
+  getDatosTIP(params: any) {
+    return this.http.post<any>(
+      "http://10.23.14.164:9000/Servicios/AccesoDatos_1.0.0/api/Reportes/GetReporteObjTag",
+      params,
+      { headers: this.generateBasicHeaders() }
+    );
+  }
 }

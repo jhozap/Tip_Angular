@@ -1,0 +1,76 @@
+<mat-form-field>
+  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+</mat-form-field>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- ESTADO Column -->
+  <ng-container matColumnDef="ESTADO">
+    <th mat-header-cell *matHeaderCellDef> Estado </th>
+    <td mat-cell *matCellDef="let element"> {{element.ESTADO}} </td>
+  </ng-container>
+
+  <!-- FECHA Column -->
+  <ng-container matColumnDef="FECHA">
+    <th mat-header-cell *matHeaderCellDef> Fecha </th>
+    <td mat-cell *matCellDef="let element"> {{element.FECHA | date:'dd/MM/yyyy'}} </td>
+  </ng-container>
+
+  <!-- FECHA_CREA Column -->
+  <ng-container matColumnDef="FECHA_CREA">
+    <th mat-header-cell *matHeaderCellDef> Fecha Creacion </th>
+    <td mat-cell *matCellDef="let element"> {{element.FECHA_CREA | date:'dd/MM/yyyy'}} </td>
+  </ng-container>
+
+  <!-- ID_OLA Column -->
+  <ng-container matColumnDef="ID_OLA">
+    <th mat-header-cell *matHeaderCellDef> Ola </th>
+    <td mat-cell *matCellDef="let element"> {{element.ID_OLA}} </td>
+  </ng-container>
+
+  <!-- ID_RUTA Column -->
+  <ng-container matColumnDef="ID_RUTA">
+    <th mat-header-cell *matHeaderCellDef> Ruta </th>
+    <td mat-cell *matCellDef="let element"> {{element.ID_RUTA}} </td>
+  </ng-container>
+
+  <!-- NOTA_PEDIDO Column -->
+  <ng-container matColumnDef="NOTA_PEDIDO">
+    <th mat-header-cell *matHeaderCellDef> Nota Pedido </th>
+    <td mat-cell *matCellDef="let element"> {{element.NOTA_PEDIDO}} </td>
+  </ng-container>
+
+  <!-- ORDER_ID Column -->
+  <ng-container matColumnDef="ORDER_ID">
+    <th mat-header-cell *matHeaderCellDef> Orden </th>
+    <td mat-cell *matCellDef="let element"> {{element.ORDER_ID}} </td>
+  </ng-container>
+
+  <!-- SKU Column -->
+  <ng-container matColumnDef="SKU">
+    <th mat-header-cell *matHeaderCellDef> SKU </th>
+    <td mat-cell *matCellDef="let element"> {{element.SKU}} </td>
+  </ng-container>
+
+  <!-- STICKER Column -->
+  <ng-container matColumnDef="STICKER">
+    <th mat-header-cell *matHeaderCellDef> Sticker </th>
+    <td mat-cell *matCellDef="let element"> {{element.STICKER}} </td>
+  </ng-container>
+
+  <!-- TRANSPORTADORA Column -->
+  <ng-container matColumnDef="TRANSPORTADORA">
+    <th mat-header-cell *matHeaderCellDef> Transportadora </th>
+    <td mat-cell *matCellDef="let element"> {{element.TRANSPORTADORA}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 20, 50, 100]"
+  showFirstLastButtons
+></mat-paginator>

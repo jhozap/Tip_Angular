@@ -44,6 +44,7 @@ import { StateComponent } from './components/state/state.component';
 import { LoadingComponent } from './components/loading/loading.component';
 import { ToastrModule } from "ngx-toastr";
 import { TableDetailsComponent } from './components/table-details/table-details.component';
+import { TableTipComponent } from './components/table-tip/table-tip.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { TableDetailsComponent } from './components/table-details/table-details.
     GraphicComponent,
     StateComponent,
     LoadingComponent,
-    TableDetailsComponent
+    TableDetailsComponent,
+    TableTipComponent
   ],
   imports: [
     BrowserModule,

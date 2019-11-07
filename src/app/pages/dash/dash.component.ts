@@ -138,6 +138,7 @@ export class DashComponent implements OnInit {
   fechaIni;
   fechaFin;
   details;
+  dtosTIP;
   public formGroup: FormGroup;
 
   constructor(
@@ -150,6 +151,7 @@ export class DashComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     this.consultaDetalle();
+    this.consultaDatosTIP();
   }
 
   // Construccion de formulario Reactivo para las fechas del filtro principal
@@ -172,7 +174,6 @@ export class DashComponent implements OnInit {
 
   // Consulta inicial de Transportadoras
   consultar() {
-    debugger;
     // habilitar pantalla de loading
     this.isLoading = true;
     // no renderizar contenido
@@ -183,14 +184,18 @@ export class DashComponent implements OnInit {
     this.bindingService.shipping.next(null);
     this.bindingService.state.next(null);
     // resetear pasos 2 y 3
-    this.bindingService.secondStep.next(false);  
-    // captura fecha inicial con moment
+    this.bindingService.secondStep.next(false);
+    this.secondStep = false;
+    this.details = null;
+    this.thirdStep = false;
+    this.dtosTIP = null;
+    // captura fecha inicial con moment    
     this.fechaIni = moment(this.formGroup.get("fechaInicioControl").value)
-      .format("YYYYMMDD")
+      .format("DD/MM/YYYY")
       .toString();
     // captura feha final con moment
     this.fechaFin = moment(this.formGroup.get("fechaFinControl").value)
-      .format("YYYYMMDD")
+      .format("DD/MM/YYYY")
       .toString();
     // construccion de primera consulta
     const query = {
@@ -198,10 +203,10 @@ export class DashComponent implements OnInit {
       Parametros: "#" + this.fechaIni + "#" + this.fechaFin,
       Separador: "#"
     };
- 
+
     // Consulta de primera tab Transportadoras
     // this.dataService.getTransportadoras(query).subscribe((data: any) => {
-      
+
     //   // Validacion de respuesta de la consulta
     //   if (data["Estado"]) {
     //     // Mapeo de estructura de datos
@@ -245,6 +250,90 @@ export class DashComponent implements OnInit {
     // });
 
     /* Mok de datos primera consulta */
+    setTimeout(() => {
+      this.mokDataPrincipal();
+    }, 1500);
+    
+  }
+
+  // consultar detalle Transportadora
+  consultaDetalle() {
+    this.bindingService.secondStep.subscribe(data => {
+      // console.log(data);
+
+      if (data) {
+        this.isLoading = true;
+        this.secondStep = false;
+        this.details = null;
+        this.thirdStep = false;
+        this.dtosTIP = null;
+        const query = {
+          Tag: "TIPDAEST",
+          Parametros:
+            "#" +
+            this.bindingService.shipping.value +
+            "#" +
+            this.bindingService.state.value,
+          Separador: "#"
+        };
+
+        this.dataService.getDetalleEstado(query).subscribe((data: any) => {
+          if (data["Estado"]) {
+            this.details = data["Value"];
+            this.secondStep = true;
+            this.isLoading = false;
+          } else {
+            this.toastr.info("La consulta no retorno datos");
+          }
+        });
+      }
+    });
+
+  }
+
+  consultaDatosTIP() {
+    this.bindingService.thirdStep.subscribe(data => {
+      // console.log(data);
+
+      if (data) {
+        this.isLoading = true;
+        this.thirdStep = false;
+        let estados = this.bindingService.selectedStates.value;
+        estados = JSON.stringify(estados.map(x => x.ESTADO_MONITOREO))
+          .replace("[", "")
+          .replace("]", "");
+        // console.log(estados);
+
+        const query = {
+          Tag: "TIPDTOSDTL",
+          Parametros:
+            "#" +
+            estados +
+            "#" +
+            this.fechaIni +
+            "#" +
+            this.fechaFin +
+            "#" +
+            this.bindingService.shipping.value,
+          Separador: "#"
+        };
+
+        this.dataService.getDatosTIP(query).subscribe((data: any) => {
+          if (data["Estado"]) {
+            console.log(data["Value"]);
+            this.dtosTIP = data["Value"];
+            this.thirdStep = true;
+            this.isLoading = false;
+          } else {
+            this.toastr.info("La consulta no retorno datos");
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
+
+  mokDataPrincipal() {
     this.lstTransportadoras = [
       {
         transportadoraID: 2,
@@ -323,38 +412,5 @@ export class DashComponent implements OnInit {
     this.firstStep = true;
     this.renderContent = true;
     this.isLoading = false;
-  }
-
-  // consultar detalle Transportadora
-  consultaDetalle() {
-    this.bindingService.secondStep.subscribe(data => {
-      console.log(data);
-      // debugger;
-      if (data) {
-        this.isLoading = true;
-        this.secondStep = false;
-        const query = {
-          Tag: "TIPDAEST",
-          Parametros:
-            "#" +
-            this.bindingService.shipping.value +
-            "#" +
-            this.bindingService.state.value,
-          Separador: "#"
-        };
-
-        this.dataService.getDetalleEstado(query).subscribe((data: any) => {
-          if (data["Estado"]) {
-            this.details = data["Value"];
-            this.secondStep = true;
-            this.isLoading = false;
-          } else {
-            this.toastr.info("La consulta no retorno datos");
-          }
-        });
-      }
-    });
-
-    //
   }
 }

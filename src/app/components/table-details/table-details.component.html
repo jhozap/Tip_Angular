@@ -1,6 +1,9 @@
 <div class="button">
-    <button mat-raised-button color="primary">Consultar</button>
+    <button mat-raised-button color="primary" (click)="ConsultarDatosTip()" [disabled]="!selection.selected.length > 0">Consultar</button>
 </div>
+<mat-form-field>
+  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+</mat-form-field>
 <table #table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
   <!-- Checkbox Column -->
   <ng-container matColumnDef="select">
