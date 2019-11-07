@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: "root"
@@ -15,7 +16,7 @@ export class DataService {
 
   getTransportadoras(params: any) {
     return this.http.post<any>(
-      "http://10.23.14.164:9000/Servicios/AccesoDatos_1.0.0/api/Reportes/GetReporteObjTag",
+      environment.API + "/Reportes/GetReporteObjTag",
       params,
       { headers: this.generateBasicHeaders() }
     );
@@ -23,7 +24,7 @@ export class DataService {
 
   getDetalleEstado(params: any) {
     return this.http.post<any>(
-      "http://10.23.14.164:9000/Servicios/AccesoDatos_1.0.0/api/Reportes/GetReporteObjTag",
+      environment.API + "/Reportes/GetReporteObjTag",
       params,
       { headers: this.generateBasicHeaders() }
     );
@@ -31,7 +32,7 @@ export class DataService {
 
   getDatosTIP(params: any) {
     return this.http.post<any>(
-      "http://10.23.14.164:9000/Servicios/AccesoDatos_1.0.0/api/Reportes/GetReporteObjTag",
+      environment.API + "/Reportes/GetReporteObjTag",
       params,
       { headers: this.generateBasicHeaders() }
     );

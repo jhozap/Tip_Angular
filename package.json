@@ -7,7 +7,11 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "dev": "ng build --outputPath=dist/dev --baseHref=/Aplicaciones/DashBoard_3.0.0/",
+    "qa": "ng build -c qa --outputPath=dist/qa --baseHref=/Aplicaciones/DashBoard_3.0.0/",
+    "prod": "ng build -c production --prod --outputPath=dist/prod --baseHref=/Aplicaciones/DashBoard_3.0.0/",
+    "all": "npm run-script dev & npm run-script qa & npm run-script prod"
   },
   "private": true,
   "dependencies": {
