@@ -1,7 +1,7 @@
 @import '../../../assets/css/vars';
 
 .estados {
-    position: relative;
+  position: relative;
   display: grid;
   grid-template-columns: min-content 1fr;
   grid-gap: 0.5rem;
@@ -23,5 +23,12 @@
       &::after {
           width: 3px;
       }
+  }
+  & .selected {
+    font-weight: bold;
+    color: $HC-black;
+    &::after {
+        width: 3px;
+    }
   }
 }

@@ -9,109 +9,158 @@
   >
     <h2>{{ errorMessage }}</h2>
   </mat-card>
-  <!-- <div>
-    <h1 [@entering]>
-      <span>Proveedor:</span
-      ><span [@child]="proveedor !== undefined">{{
-        proveedor[0]?.DESCRIPCION || 'Proveedor no encontrado.'
-      }}</span>
-    </h1>
-  </div> -->
 
-  <mat-card class="mat-elevation-z4 first">
-    <!-- Filtro -->
-    <form [formGroup]="formGroup">
-      <mat-form-field>
-        <input
-          matInput
-          [matDatepicker]="dp1"
-          placeholder="Fecha Inicial"
-          formControlName="fechaInicioControl"
-          readonly
-        />
-        <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
-        <mat-datepicker touchUi #dp1></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field>
-        <input
-          matInput
-          [matDatepicker]="dp2"
-          placeholder="Fecha Final"
-          formControlName="fechaFinControl"
-          readonly
-        />
-        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker touchUi #dp2></mat-datepicker>
-      </mat-form-field>
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="formGroup.invalid"
-        (click)="consultar()"
-      >
-        <mat-icon>search</mat-icon>
-        Consultar
-      </button>
-    </form>
-    <!-- Fin Filtro -->
-  </mat-card>
+  <div class="head">
+    <mat-card class="mat-elevation-z4">
+      <!-- Filtro -->
+      <form [formGroup]="formGroup">
+        <mat-form-field>
+          <input
+            matInput
+            [matDatepicker]="dp1"
+            placeholder="Fecha Inicial"
+            formControlName="fechaInicioControl"
+          />
+          <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+          <mat-datepicker touchUi #dp1></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <input
+            matInput
+            [matDatepicker]="dp2"
+            placeholder="Fecha Final"
+            formControlName="fechaFinControl"
+          />
+          <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+          <mat-datepicker touchUi #dp2></mat-datepicker>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="formGroup.invalid"
+          (click)="consultar()"
+        >
+          <mat-icon>search</mat-icon>
+          Consultar
+        </button>
+      </form>
+      <!-- Fin Filtro -->
+    </mat-card>
 
-  <mat-card class="mat-elevation-z4" *ngIf="renderContent">
-    <!-- Accordion -->
-    <mat-accordion class="example-headers-align" multi="true">
-      <!-- Primer Tab -->
-      <mat-expansion-panel [expanded]="firstStep" hideToggle disabled>
-        <mat-expansion-panel-header class="accordion-panel-header">
-          <mat-panel-title>
-            Transportadoras
-          </mat-panel-title>
-          <mat-panel-description>
-            <mat-icon>local_shipping</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-          <app-graphic
-            *ngFor="let transportadora of lstTransportadoras"
-            [transportadora]="transportadora"
-            class="child-component"
-          ></app-graphic>
-      </mat-expansion-panel>
-      <!-- Segundo Tab -->
-      <mat-expansion-panel [expanded]="secondStep" hideToggle disabled>
-        <mat-expansion-panel-header class="accordion-panel-header">
-          <mat-panel-title>
-            Detalle Transportadora
-          </mat-panel-title>
-          <mat-panel-description>
-            <mat-icon>list</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div *ngIf="details?.length > 0">
-          <!-- Llamada a tabla de detalle de transportadora -->
-          <app-table-details [details]="details"></app-table-details>
+    <mat-card class="mat-elevation-z4">
+      
+      <div *ngIf="lstIndicadores !== null" class="charts">
+        <div class="indicador" [ngStyle]="{'color': lstIndicadores.VALOR_OTIF}" [ngSwitch]="lstIndicadores.TENDENCIA_OTIF">
+          <mat-icon *ngSwitchCase="0" >trending_flat</mat-icon>
+          <mat-icon *ngSwitchCase="1">trending_up</mat-icon>
+          <mat-icon *ngSwitchCase="-1">trending_down</mat-icon>
+          <mat-label>{{ lstIndicadores.VALOR_OTIF }}</mat-label>
+          <span>{{ lstIndicadores.TITULO_OTIF }}</span>
         </div>
-        
-       
-      </mat-expansion-panel>
-      <!-- Tercer Tab -->
-      <mat-expansion-panel [expanded]="thirdStep" hideToggle disabled>
-        <mat-expansion-panel-header class="accordion-panel-header">
-          <mat-panel-title>
-            Datos TIP
-          </mat-panel-title>
-          <mat-panel-description>
-            <mat-icon>view_quilt</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div *ngIf="dtosTIP?.length > 0">
-          <!-- Llamada a tabla datos TIP -->
-          <app-table-tip [dtosTIP]="dtosTIP"></app-table-tip>
-        </div>        
-      </mat-expansion-panel>
-    </mat-accordion>
-    <!-- Fin Accordion -->
-  </mat-card>
 
-  <mat-card class="mat-elevation-z4" *ngIf="renderNotFound">
+        <div class="indicador" [ngStyle]="{'color': lstIndicadores.VALOR_NXM}" [ngSwitch]="lstIndicadores.TENDENCIA_NXM">
+          <mat-icon *ngSwitchCase="0" >trending_flat</mat-icon>
+          <mat-icon *ngSwitchCase="1">trending_up</mat-icon>
+          <mat-icon *ngSwitchCase="-1">trending_down</mat-icon>
+          <mat-label>{{ lstIndicadores.VALOR_NXM }}</mat-label>
+          <span>{{ lstIndicadores.TITULO_NXM }}</span>
+        </div>
+
+        <div class="indicador" [ngStyle]="{'color': lstIndicadores.VALOR_NXD}" [ngSwitch]="lstIndicadores.TENDENCIA_NXD">
+          <mat-icon *ngSwitchCase="0" >trending_flat</mat-icon>
+          <mat-icon *ngSwitchCase="1">trending_up</mat-icon>
+          <mat-icon *ngSwitchCase="-1">trending_down</mat-icon>
+          <mat-label>{{ lstIndicadores.VALOR_NXD }}</mat-label>
+          <span>{{ lstIndicadores.TITULO_NXD }}</span>
+        </div>
+      </div>
+      <div class="date"> fecha ultima actualizacion: {{ lstIndicadores.FECHA_ACTUALIZACION | date: 'dd/MM/yy, hh:mm a' }}</div>
+    </mat-card>
+  </div>
+
+  <div class="body">
+    <mat-card class="second-card mat-elevation-z4" *ngIf="renderContent">
+      <!-- Stepper -->
+      <mat-horizontal-stepper [linear]="true" #stepper>
+        <!-- Paso 1 -->
+        <mat-step state="local">
+          <ng-template matStepLabel>Transportadoras</ng-template>
+          <div class="content">
+            <app-graphic
+              *ngFor="let transportadora of lstTransportadoras"
+              [transportadora]="transportadora"
+              class="child-component"
+            ></app-graphic>
+          </div>
+          <div class="options">
+            <button
+              mat-flat-button
+              matStepperNext
+              color="accent"
+              [disabled]="!(details?.length > 0)"
+            >
+              Siguiente
+            </button>
+          </div>
+        </mat-step>
+        <!-- Paso 2 -->
+        <mat-step state="list">
+          <ng-template matStepLabel>Detalle Transportadora</ng-template>
+          <div *ngIf="details?.length > 0">
+            <!-- Llamada a tabla de detalle de transportadora -->
+            <app-table-details [details]="details"></app-table-details>
+          </div>
+          <div class="options">
+            <button mat-flat-button matStepperPrevious color="primary">
+              Atras
+            </button>
+            <button
+              mat-flat-button
+              matStepperNext
+              color="accent"
+              [disabled]="!(dtosTIP?.length > 0)"
+            >
+              Siguiente
+            </button>
+          </div>
+        </mat-step>
+        <!-- Paso 3 -->
+        <mat-step state="view">
+          <ng-template matStepLabel>Datos TIP</ng-template>
+          <div *ngIf="dtosTIP?.length > 0">
+            <!-- Llamada a tabla datos TIP -->
+            <app-table-tip [dtosTIP]="dtosTIP"></app-table-tip>
+          </div>
+          <div class="options">
+            <button mat-flat-button matStepperPrevious color="primary">
+              Atras
+            </button>
+            <button
+              mat-flat-button
+              matStepperNext
+              color="accent"
+              (click)="stepper.reset()"
+            >
+              Ir al Inicio
+            </button>
+          </div>
+        </mat-step>
+
+        <ng-template matStepperIcon="local">
+          <mat-icon>local_shipping</mat-icon>
+        </ng-template>
+        <ng-template matStepperIcon="list">
+          <mat-icon>list</mat-icon>
+        </ng-template>
+        <ng-template matStepperIcon="view">
+          <mat-icon>view_quilt</mat-icon>
+        </ng-template>
+      </mat-horizontal-stepper>
+      <!-- Fin Stepper -->
+    </mat-card>
+  </div>
+
+  <mat-card class="mat-elevation-z4" *ngIf="false">
     <p>No data Found</p>
   </mat-card>
 </div>

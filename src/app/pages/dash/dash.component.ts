@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import {
   animate,
   state,
@@ -10,19 +10,23 @@ import {
   animateChild
 } from "@angular/animations";
 import { DataService } from "src/app/services/data.service";
-import { from, of, zip } from "rxjs";
-import { Transportadoras } from "src/app/Interfaces/interfaces.class";
-import { groupBy, mergeMap, toArray, distinct } from "rxjs/operators";
-import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
+import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl
+} from "@angular/forms";
 import * as moment from "moment";
 import {
   MAT_DATE_FORMATS,
   DateAdapter,
-  MAT_DATE_LOCALE
+  MAT_DATE_LOCALE,
+  MatStepper
 } from "@angular/material";
 import { MomentDateAdapter } from "@angular/material-moment-adapter";
-import { BindingService } from 'src/app/services/binding.service';
-import { ToastrService } from 'ngx-toastr';
+import { BindingService } from "src/app/services/binding.service";
+import { ToastrService } from "ngx-toastr";
 
 export const MY_FORMATS = {
   parse: {
@@ -46,7 +50,11 @@ export const MY_FORMATS = {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE]
     },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { displayDefaultIndicatorType: false }
+    }
   ],
   animations: [
     trigger("entering", [
@@ -125,6 +133,7 @@ export const MY_FORMATS = {
   ]
 })
 export class DashComponent implements OnInit {
+  @ViewChild("stepper", { static: false }) stepper: MatStepper;
   render = false;
   renderNotFound = false;
   renderContent = false;
@@ -139,6 +148,8 @@ export class DashComponent implements OnInit {
   fechaFin;
   details;
   dtosTIP;
+  lstIndicadores = null;
+  date = new Date;
   public formGroup: FormGroup;
 
   constructor(
@@ -146,10 +157,24 @@ export class DashComponent implements OnInit {
     private bindingService: BindingService,
     private toastr: ToastrService,
     private formBuilder: FormBuilder
-  ) {}
+  ) {
+    this.buildForm();
+  }
 
   ngOnInit() {
-    this.buildForm();
+
+    // llenar indicadores
+    this.getIndicadores();
+
+    // Inicializar fecha inicial
+    this.formGroup
+      .get("fechaInicioControl")
+      .setValue(moment().subtract(1, "day"));
+
+    // nicializar fecha final
+    this.formGroup.get("fechaFinControl").setValue(moment().add(1, "day"));
+
+    this.consultar();
     this.consultaDetalle();
     this.consultaDatosTIP();
   }
@@ -157,19 +182,42 @@ export class DashComponent implements OnInit {
   // Construccion de formulario Reactivo para las fechas del filtro principal
   private buildForm() {
     this.formGroup = this.formBuilder.group({
-      fechaInicioControl: new FormControl([
-        {
-          value: moment()
-            .subtract(1, "year")
-            .format("DD/MM/YYYY")
-        },
-        [Validators.required]
-      ]),
-      fechaFinControl: new FormControl([
-        moment().format("DD/MM/YYYY"),
-        [Validators.required]
-      ])
+      fechaInicioControl: [Validators.required],
+      fechaFinControl: [Validators.required]
     });
+  }
+
+  getIndicadores() {
+
+    this.dataService.getIndicadores("TIP2INDIC")
+      .subscribe(data => {
+        if (data["Estado"]) {
+          debugger;
+          this.lstIndicadores = {
+            // OTIF
+            VALOR_OTIF: data["Value"][0]["VALOR"],
+            COLOR_OTIF: data["Value"][0]["COLOR"],
+            TITULO_OTIF: data["Value"][0]["TITULO"],
+            FECHA_ACTUALIZACION: data["Value"][0]["FECHA_ACTUALIZACION"],
+            TENDENCIA_OTIF: data["Value"][0]["TENDENCIA"],
+            // Notas * Metros3
+            VALOR_NXM: data["Value"][1]["VALOR"],
+            COLOR_NXM: data["Value"][1]["COLOR"],
+            TITULO_NXM: data["Value"][1]["TITULO"],
+            TENDENCIA_NXM: data["Value"][1]["TENDENCIA"],
+            // Notas * Día
+            VALOR_NXD: data["Value"][2]["VALOR"],
+            COLOR_NXD: data["Value"][2]["COLOR"],
+            TITULO_NXD: data["Value"][2]["TITULO"],
+            TENDENCIA_NXD: data["Value"][2]["TENDENCIA"]
+          };
+
+          console.log(this.lstIndicadores);
+          console.log(this.lstIndicadores.length);
+        } else {
+
+        }
+      });
   }
 
   // Consulta inicial de Transportadoras
@@ -189,7 +237,7 @@ export class DashComponent implements OnInit {
     this.details = null;
     this.thirdStep = false;
     this.dtosTIP = null;
-    // captura fecha inicial con moment    
+    // captura fecha inicial con moment
     this.fechaIni = moment(this.formGroup.get("fechaInicioControl").value)
       .format("DD/MM/YYYY")
       .toString();
@@ -204,56 +252,58 @@ export class DashComponent implements OnInit {
       Separador: "#"
     };
 
-    // Consulta de primera tab Transportadoras
-    // this.dataService.getTransportadoras(query).subscribe((data: any) => {
-
-    //   // Validacion de respuesta de la consulta
-    //   if (data["Estado"]) {
-    //     // Mapeo de estructura de datos
-    //     this.lstTransportadoras = Array.from(
-    //       new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
-    //     ).map(x => {
-    //       return {
-    //         transportadoraID: x,
-    //         transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
-    //           .TRANSPORTADORA,
-    //         CANTIDAD: data["Value"]
-    //           .filter(q => q.ID_TRANSPORTADORA === x)
-    //           .map(w => w.CANTIDAD)
-    //           .reduce((a, b) => a + b, 0),
-    //         ENVIADAS: data["Value"]
-    //           .filter(q => q.ID_TRANSPORTADORA === x)
-    //           .map(w => w.ENVIADAS)[0],
-    //         ESTADOS: data["Value"]
-    //           .filter(e => e.ID_TRANSPORTADORA === x)
-    //           .map(r => {
-    //             return {
-    //               Color: r.COLOR_FONDO,
-    //               IdEstado: r.ID_ESTADO,
-    //               Estado: r.ESTADO,
-    //               Cantidad: r.CANTIDAD
-    //             };
-    //           })
-    //       };
-    //     });
-    //     // console.log(JSON.stringify(this.lstTransportadoras));
-    //     // Activar primer tab
-    //     this.firstStep = true;
-    //     // Activar rendeo de contenido
-    //     this.renderContent = true;
-    //   } else {
-    //     // si la consulta principal no trae datos se rendea una carta de no contenido
-    //     this.renderNotFound = true;
-    //   }
-    //   // quitar pantalla de loading
-    //   this.isLoading = false;
-    // });
+    this.getTransportadoras(query);
 
     /* Mok de datos primera consulta */
     setTimeout(() => {
       this.mokDataPrincipal();
-    }, 1500);
-    
+    }, 1000);
+  }
+
+  getTransportadoras(query: any) {
+    // Consulta de primera tab Transportadoras
+    this.dataService.getTransportadoras(query).subscribe((data: any) => {
+      // Validacion de respuesta de la consulta
+      if (data["Estado"]) {
+        // Mapeo de estructura de datos
+        this.lstTransportadoras = Array.from(
+          new Set(data["Value"].map(x => x.ID_TRANSPORTADORA))
+        ).map(x => {
+          return {
+            transportadoraID: x,
+            transportadora: data["Value"].find(a => a.ID_TRANSPORTADORA === x)
+              .TRANSPORTADORA,
+            CANTIDAD: data["Value"]
+              .filter(q => q.ID_TRANSPORTADORA === x)
+              .map(w => w.CANTIDAD)
+              .reduce((a, b) => a + b, 0),
+            ENVIADAS: data["Value"]
+              .filter(q => q.ID_TRANSPORTADORA === x)
+              .map(w => w.ENVIADAS)[0],
+            ESTADOS: data["Value"]
+              .filter(e => e.ID_TRANSPORTADORA === x)
+              .map(r => {
+                return {
+                  Color: r.COLOR_FONDO,
+                  IdEstado: r.ID_ESTADO,
+                  Estado: r.ESTADO,
+                  Cantidad: r.CANTIDAD
+                };
+              })
+          };
+        });
+
+        // Activar primer tab
+        this.firstStep = true;
+        // Activar rendeo de contenido
+        this.renderContent = true;
+      } else {
+        // si la consulta principal no trae datos se rendea una carta de no contenido
+        this.renderNotFound = true;
+      }
+      // quitar pantalla de loading
+      this.isLoading = false;
+    });
   }
 
   // consultar detalle Transportadora
@@ -280,7 +330,7 @@ export class DashComponent implements OnInit {
         this.dataService.getDetalleEstado(query).subscribe((data: any) => {
           if (data["Estado"]) {
             this.details = data["Value"];
-            this.secondStep = true;
+            this.stepper.selectedIndex = 1;
             this.isLoading = false;
           } else {
             this.toastr.info("La consulta no retorno datos");
@@ -288,7 +338,6 @@ export class DashComponent implements OnInit {
         });
       }
     });
-
   }
 
   consultaDatosTIP() {
@@ -322,7 +371,7 @@ export class DashComponent implements OnInit {
           if (data["Estado"]) {
             console.log(data["Value"]);
             this.dtosTIP = data["Value"];
-            this.thirdStep = true;
+            this.stepper.selectedIndex = 2;
             this.isLoading = false;
           } else {
             this.toastr.info("La consulta no retorno datos");
