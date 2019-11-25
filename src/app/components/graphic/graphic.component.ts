@@ -14,7 +14,8 @@ export class GraphicComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    // console.log(this.transportadora);
+    console.log("transportadora");
+    console.log(this.transportadora);
   }
 
 }

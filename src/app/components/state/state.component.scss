@@ -21,14 +21,15 @@
       font-weight: bold;
       color: $HC-black;
       &::after {
-          width: 3px;
+          width: 10px;
       }
-  }
+  }  
   & .selected {
-    font-weight: bold;
-    color: $HC-black;
-    &::after {
-        width: 3px;
-    }
+  font-weight: bold;
+  color: $HC-black;
+  &::after {
+      width: 3px;
   }
 }
+}
+

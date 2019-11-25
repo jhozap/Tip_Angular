@@ -177,7 +177,11 @@ button {
   text-align: end;
   padding: 10px 10px 0 0;
   color: #c4c1c1;
-  font-size: 12px;
+  font-size: 10px;
+}
+
+::ng-deep .mat-horizontal-stepper-header{
+    pointer-events: none !important;
 }
 
 @media screen and (max-width: 470px) {
@@ -190,3 +194,4 @@ button {
     }
   }
 }
+

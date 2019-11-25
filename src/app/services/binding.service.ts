@@ -17,5 +17,9 @@ export class BindingService {
   // Estados seleccionados segundo Step
   selectedStates = new BehaviorSubject<any>(null);
 
+  // labels
+  transport = new BehaviorSubject<string>(null);
+  selectedState = new BehaviorSubject<string>(null);
+
   constructor() {}
 }

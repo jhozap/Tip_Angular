@@ -74,14 +74,14 @@
           <span>{{ lstIndicadores.TITULO_NXD }}</span>
         </div>
       </div>
-      <div class="date"> fecha ultima actualizacion: {{ lstIndicadores.FECHA_ACTUALIZACION }}</div>
+      <div class="date"> fecha ultima actualizacion OTIF: {{ lstIndicadores?.FECHA_ACTUALIZACION }}</div>
     </mat-card>
   </div>
 
   <div class="body">
     <mat-card class="second-card mat-elevation-z4" *ngIf="renderContent">
       <!-- Stepper -->
-      <mat-horizontal-stepper [linear]="true" #stepper>
+      <mat-horizontal-stepper disabled="true" #stepper>
         <!-- Paso 1 -->
         <mat-step state="local">
           <ng-template matStepLabel>Transportadoras</ng-template>
@@ -105,7 +105,7 @@
         </mat-step>
         <!-- Paso 2 -->
         <mat-step state="list">
-          <ng-template matStepLabel>Detalle Transportadora</ng-template>
+          <ng-template matStepLabel>Detalle Transportadora {{ transportadora }}/{{ estado }}</ng-template>
           <div *ngIf="details?.length > 0">
             <!-- Llamada a tabla de detalle de transportadora -->
             <app-table-details [details]="details"></app-table-details>

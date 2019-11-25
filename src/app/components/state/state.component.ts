@@ -17,6 +17,8 @@ export class StateComponent implements OnInit {
   @Input()
   transportadora: any;
 
+  selected = false;
+
   constructor(private bindingService: BindingService) {}
 
   ngOnInit() {}
@@ -26,6 +28,13 @@ export class StateComponent implements OnInit {
     // llenar transportadora y estado seleccionados
     this.bindingService.shipping.next(this.transportadora);
     this.bindingService.state.next(this.estado.IdEstado);
+
+
+    // set labels
+    this.bindingService.transport.next(this.transportadora);
+    console.log(this.transportadora);
+    this.bindingService.selectedState.next(this.estado.Estado);
+    console.log(this.estado.Estado);
 
     // Activar segundo paso
     this.bindingService.secondStep.next(true);    

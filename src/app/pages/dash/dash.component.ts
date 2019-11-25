@@ -150,6 +150,10 @@ export class DashComponent implements OnInit {
   dtosTIP;
   lstIndicadores = null;
   date = new Date;
+
+  transportadora = "";
+  estado = "";
+
   public formGroup: FormGroup;
 
   constructor(
@@ -158,10 +162,13 @@ export class DashComponent implements OnInit {
     private toastr: ToastrService,
     private formBuilder: FormBuilder
   ) {
+    this.bindingDataLabels();
     this.buildForm();
   }
 
   ngOnInit() {
+
+    
 
     // llenar indicadores
     this.getIndicadores();
@@ -172,7 +179,8 @@ export class DashComponent implements OnInit {
       .setValue(moment().subtract(1, "day"));
 
     // nicializar fecha final
-    this.formGroup.get("fechaFinControl").setValue(moment().add(1, "day"));
+    this.formGroup.get("fechaFinControl")
+      .setValue(moment().add(1, "day"));
 
     this.consultar();
     this.consultaDetalle();
@@ -187,6 +195,7 @@ export class DashComponent implements OnInit {
     });
   }
 
+  // consulta y mapeo de indicadores superiores
   getIndicadores() {
 
     this.dataService.getIndicadores("TIP2INDIC")
@@ -211,9 +220,6 @@ export class DashComponent implements OnInit {
             TITULO_NXD: data["Value"][2]["TITULO"],
             TENDENCIA_NXD: data["Value"][2]["TENDENCIA"]
           };
-
-          console.log(this.lstIndicadores);
-          console.log(this.lstIndicadores.length);
         } else {
 
         }
@@ -340,6 +346,7 @@ export class DashComponent implements OnInit {
     });
   }
 
+  // consulta datos TIP segun datos seleccionados
   consultaDatosTIP() {
     this.bindingService.thirdStep.subscribe(data => {
       // console.log(data);
@@ -461,5 +468,17 @@ export class DashComponent implements OnInit {
     this.firstStep = true;
     this.renderContent = true;
     this.isLoading = false;
+  }
+
+  bindingDataLabels() {
+    this.bindingService.transport
+      .subscribe(data => {
+        this.transportadora = data
+      });
+
+    this.bindingService.selectedState
+      .subscribe(data => {
+        this.estado = data
+      });
   }
 }

@@ -31,7 +31,6 @@ export class TableDetailsComponent implements OnInit, OnDestroy {
   constructor(private bindingService: BindingService) {}
 
   ngOnInit() {
-    debugger;
     // llenando DataSource con datos para la tabla
     this.dataSource = new MatTableDataSource<DetalleTransportadora>(
       this.details
