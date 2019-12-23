@@ -329,7 +329,11 @@ export class DashComponent implements OnInit {
             "#" +
             this.bindingService.shipping.value +
             "#" +
-            this.bindingService.state.value,
+            this.bindingService.state.value +
+            "#" +
+            this.fechaIni +
+            "#" +
+            this.fechaFin,
           Separador: "#"
         };
 
@@ -370,7 +374,9 @@ export class DashComponent implements OnInit {
             "#" +
             this.fechaFin +
             "#" +
-            this.bindingService.shipping.value,
+            this.bindingService.shipping.value +
+            "#" +
+            this.bindingService.state.value,
           Separador: "#"
         };
 
